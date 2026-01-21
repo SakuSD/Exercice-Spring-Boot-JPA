@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Thés</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/confirmation.js}" defer></script>
+</head>
+<body>
+<header>
+    <h1>Liste des Thés</h1>
+    <a th:href="@{/nouveau}" class="btn btn-add">Ajouter un thé</a>
+</header>
+
+<div class="controls">
+    <input type="text" id="searchInput" placeholder="Rechercher par nom..." onkeyup="filterTable()">
+    <select id="typeFilter" onchange="filterTable()">
+        <option value="">Tous les types</option>
+        <option value="Vert">Vert</option>
+        <option value="Noir">Noir</option>
+        <option value="Oolong">Oolong</option>
+        <option value="Blanc">Blanc</option>
+        <option value="Pu-erh">Pu-erh</option>
+    </select>
+</div>
+
+<table id="produitsTable">
+    <thead>
+    <tr>
+        <th onclick="sortTable(0, 'string')">Nom ▲▼</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Origine</th>
+        <th onclick="sortTable(4, 'number')">Prix ▲▼</th>
+        <th onclick="sortTable(5, 'number')">Quantité ▲▼</th>
+        <th>Date réception</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="produit : ${produits}">
+        <td th:text="${produit.nom}"></td>
+        <td th:text="${produit.description}"></td>
+        <td th:text="${produit.typeThe}"></td>
+        <td th:text="${produit.origine}"></td>
+        <td th:text="${produit.prix}"></td>
+        <td th:text="${produit.quantiteStock}"></td>
+        <td th:text="${produit.dateReception}"></td>
+        <td>
+            <a th:href="@{'/modifier/' + ${produit.id}}" class="btn btn-edit">Modifier</a>
+            <a th:href="@{'/supprimer/' + ${produit.id}}"
+               class="btn btn-delete"
+               th:attr="data-nom=${produit.nom}">Supprimer</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    // Recherche + filtre
+    function filterTable() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const typeFilter = document.getElementById("typeFilter").value;
+        const table = document.getElementById("produitsTable");
+        const tr = table.getElementsByTagName("tr");
+        for (let i = 1; i < tr.length; i++) {
+            const tds = tr[i].getElementsByTagName("td");
+            const nom = tds[0].textContent.toLowerCase();
+            const type = tds[2].textContent;
+            if ((nom.includes(input)) && (typeFilter === "" || type === typeFilter)) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    // Tri des colonnes
+    function sortTable(columnIndex, type) {
+        const table = document.getElementById("produitsTable");
+        let rows = Array.from(table.tBodies[0].rows);
+        let asc = table.getAttribute('data-sort-dir') !== 'asc';
+        rows.sort((a, b) => {
+            let x = a.cells[columnIndex].textContent.trim();
+            let y = b.cells[columnIndex].textContent.trim();
+            if (type === 'number') {
+                x = parseFloat(x) || 0;
+                y = parseFloat(y) || 0;
+            } else {
+                x = x.toLowerCase();
+                y = y.toLowerCase();
+            }
+            return asc ? (x > y ? 1 : x < y ? -1 : 0) : (x < y ? 1 : x > y ? -1 : 0);
+        });
+        // Réinsérer les lignes triées
+        const tbody = table.tBodies[0];
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+        table.setAttribute('data-sort-dir', asc ? 'asc' : 'desc');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire Produit</title>
+    <link rel="stylesheet" th:href="@{/css/formulaire-style.css}" />
+
+</head>
+<body>
+
+<h1 th:text="${produit.id} != null ? 'Modifier le produit' : 'Ajouter un produit'"></h1>
+
+<form th:action="@{${produit.id} == null ? '/enregistrer' : '/modifier/' + ${produit.id}}" th:object="${produit}" method="post">
+
+    <!-- Champ caché pour l'ID (important pour la modification) -->
+    <input type="hidden" th:field="*{id}" />
+
+    <!-- Nom -->
+    <label for="nom">Nom :</label>
+    <input type="text" id="nom" th:field="*{nom}" required />
+
+    <!-- Type de thé (menu déroulant) -->
+    <label for="typeThe">Type de thé :</label>
+    <select id="typeThe" th:field="*{typeThe}" required>
+        <option value="">-- Sélectionnez --</option>
+        <option value="Vert" th:selected="${produit.typeThe == 'Vert'}">Vert</option>
+        <option value="Noir" th:selected="${produit.typeThe == 'Noir'}">Noir</option>
+        <option value="Oolong" th:selected="${produit.typeThe == 'Oolong'}">Oolong</option>
+        <option value="Blanc" th:selected="${produit.typeThe == 'Blanc'}">Blanc</option>
+        <option value="Pu-erh" th:selected="${produit.typeThe == 'Pu-erh'}">Pu-erh</option>
+    </select>
+
+    <!-- Origine (menu déroulant) -->
+    <label for="origine">Origine :</label>
+    <select id="origine" th:field="*{origine}" required>
+        <option value="">-- Sélectionnez --</option>
+        <option value="Chine" th:selected="${produit.origine == 'Chine'}">Chine</option>
+        <option value="Japon" th:selected="${produit.origine == 'Japon'}">Japon</option>
+        <option value="Inde" th:selected="${produit.origine == 'Inde'}">Inde</option>
+        <option value="Sri Lanka" th:selected="${produit.origine == 'Sri Lanka'}">Sri Lanka</option>
+        <option value="Taiwan" th:selected="${produit.origine == 'Taiwan'}">Taiwan</option>
+    </select>
+
+    <!-- Prix -->
+    <label for="prix">Prix :</label>
+    <input type="number" id="prix" step="0.01" th:field="*{prix}" required />
+
+    <!-- Quantité en stock -->
+    <label for="quantiteStock">Quantité en stock :</label>
+    <input type="number" id="quantiteStock" th:field="*{quantiteStock}" required />
+
+    <!-- Date de réception -->
+    <label for="dateReception">Date de réception :</label>
+    <input type="date" id="dateReception" th:field="*{dateReception}" required />
+
+    <!-- Description -->
+    <label for="description">Description :</label>
+    <textarea id="description" th:field="*{description}" rows="4" required></textarea>
+
+    <button type="submit" th:text="${produit.id} != null ? 'Modifier' : 'Ajouter'"></button>
+</form>
+
+</body>
+</html>
